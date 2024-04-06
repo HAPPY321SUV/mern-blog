@@ -1,10 +1,11 @@
-import User from "../models/User.model";
+import User from "../models/User.model.js";
 import bcryptjs from "bcryptjs"
-export const SignUp=async(req,res)=>{
+import { errorHandler } from "../utilis/error.js";
+export const SignUp=async(req,res,next)=>{
     const {username,email,password}=req.body;
 
     if(!username || !email || !password || username ===""||email===''||password===''){
-        return res.status(400).json({message:"all field is required"})
+        next(errorHandler(400,'All field are required'));
     }
     const hashedPassword=bcryptjs.hashSync(password,10)
     const newuser=new User({
@@ -17,8 +18,7 @@ export const SignUp=async(req,res)=>{
     res.json("sign up is successfully")
         
     } catch (error) {
-        res.status(500).json({message:error.message})
-        
+        next(error);
     }
 
 };
